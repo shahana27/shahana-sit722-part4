@@ -1,0 +1,83 @@
+# Your Solution
+# Book-Catalog Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+      - name: book-catalog
+        image: s223235509.azurecr.io/book_catalog:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://s223235509_user:jJuShBuZfPQJZNHul63eQWscIgr1hTzw@dpg-cre0h9bv2p9s73co9g6g-a.oregon-postgres.render.com/s223235509"
+      imagePullSecrets:
+      - name: acr-secret
+ 
+---
+# Book-Catalog Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog
+spec:
+  selector:
+    app: book-catalog
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+ 
+---
+# Inventory-Management Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-management
+  template:
+    metadata:
+      labels:
+        app: inventory-management
+    spec:
+      containers:
+      - name: inventory-management
+        image: s223235509.azurecr.io/inventory_management:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://s223235509_user:jJuShBuZfPQJZNHul63eQWscIgr1hTzw@dpg-cre0h9bv2p9s73co9g6g-a.oregon-postgres.render.com/s223235509"
+      imagePullSecrets:
+      - name: acr-secret
+ 
+---
+# Inventory-Management Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-management
+spec:
+  selector:
+    app: inventory-management
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
